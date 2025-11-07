@@ -5,7 +5,7 @@
  * Handles admin interface for coverage analytics
  *
  * @package STCWCoverageAnalytics
- * @since 1.1.0
+ * @since 1.2.0
  */
 
 if (!defined('ABSPATH')) exit;
@@ -72,7 +72,9 @@ class STCWCA_Admin {
      */
     public function render_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'stcw-coverage-analytics'));
+            wp_die(
+                esc_html__('You do not have sufficient permissions to access this page.', 'stcw-coverage-analytics')
+            );
         }
 
         $coverage = STCWCA_Core::get_coverage_data();

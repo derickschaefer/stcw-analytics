@@ -1,9 +1,9 @@
 <?php
 /**
- * Coverage Analytics Dashboard Template (No Chart.js)
+ * Coverage Analytics Dashboard Template (Improved UX)
  *
  * @package STCWCoverageAnalytics
- * @since 1.1.0
+ * @since 1.2.0
  */
 
 if (!defined('ABSPATH')) exit;
@@ -13,6 +13,7 @@ $messages = [
     'trend-refreshed' => __('Coverage trend data refreshed.', 'stcw-coverage-analytics'),
 ];
 
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display of success message, no data processing
 $message_key = isset($_GET['message']) ? sanitize_key(wp_unslash($_GET['message'])) : '';
 ?>
 <div class="wrap">
@@ -35,6 +36,7 @@ $message_key = isset($_GET['message']) ? sanitize_key(wp_unslash($_GET['message'
             <div class="stcwca-label">
                 <?php
                 printf(
+                    /* translators: 1: Number of cached pages, 2: Total number of pages */
                     esc_html__('%1$s of %2$s pages', 'stcw-coverage-analytics'),
                     esc_html(number_format_i18n($coverage['cached_files'])),
                     esc_html(number_format_i18n($coverage['total_content']))
@@ -51,6 +53,7 @@ $message_key = isset($_GET['message']) ? sanitize_key(wp_unslash($_GET['message'
             <div class="stcwca-label">
                 <?php
                 printf(
+                    /* translators: 1: Number of posts, 2: Number of pages */
                     esc_html__('%1$s posts, %2$s pages', 'stcw-coverage-analytics'),
                     esc_html(number_format_i18n($coverage['total_posts'])),
                     esc_html(number_format_i18n($coverage['total_pages']))
@@ -100,7 +103,7 @@ $message_key = isset($_GET['message']) ? sanitize_key(wp_unslash($_GET['message'
                             <th><?php esc_html_e('Title', 'stcw-coverage-analytics'); ?></th>
                             <th><?php esc_html_e('Type', 'stcw-coverage-analytics'); ?></th>
                             <th><?php esc_html_e('Last Modified', 'stcw-coverage-analytics'); ?></th>
-                            <th><?php esc_html_e('Actions', 'stcw-coverage-analytics'); ?></th>
+                            <th style="width: 120px;"><?php esc_html_e('Actions', 'stcw-coverage-analytics'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,12 +117,10 @@ $message_key = isset($_GET['message']) ? sanitize_key(wp_unslash($_GET['message'
                             </td>
                             <td><?php echo esc_html(gmdate('Y-m-d H:i', strtotime($item['modified']))); ?></td>
                             <td>
-                                <button class="button button-small copy-link-button" data-url="<?php echo esc_url($item['url']); ?>">
+                                <button class="button button-small copy-link-button" data-url="<?php echo esc_url($item['url']); ?>" title="<?php esc_attr_e('Copy URL to clipboard', 'stcw-coverage-analytics'); ?>">
+                                    <span class="dashicons dashicons-admin-links"></span>
                                     <?php esc_html_e('Copy Link', 'stcw-coverage-analytics'); ?>
                                 </button>
-                                <a href="<?php echo esc_url(get_edit_post_link($item['id'])); ?>" class="button button-small">
-                                    <?php esc_html_e('Edit', 'stcw-coverage-analytics'); ?>
-                                </a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

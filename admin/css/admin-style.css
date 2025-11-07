@@ -1,6 +1,6 @@
 /**
  * Coverage Analytics Admin Styles
- * Modern card-based UI styling
+ * Modern card-based UI styling with toast notifications
  */
 
 /* Modern card-based UI styling */
@@ -92,4 +92,88 @@
 #stcwca-trend-chart {
     width: 100%;
     height: auto;
+}
+
+/* Toast Notification Styles */
+.stcwca-toast {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    color: #1d2327;
+    padding: 12px 20px;
+    border-radius: 6px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: bottom 0.3s ease-in-out;
+    min-width: 250px;
+    justify-content: center;
+}
+
+.stcwca-toast.stcwca-toast-show {
+    bottom: 30px;
+}
+
+.stcwca-toast.stcwca-toast-success {
+    border-left: 4px solid #46b450;
+}
+
+.stcwca-toast.stcwca-toast-error {
+    border-left: 4px solid #dc3232;
+}
+
+.stcwca-toast .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.stcwca-toast-success .dashicons {
+    color: #46b450;
+}
+
+.stcwca-toast-error .dashicons {
+    color: #dc3232;
+}
+
+/* Copy Button States */
+.copy-link-button {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.copy-link-button:hover {
+    background: #2271b1;
+    color: #fff;
+    border-color: #2271b1;
+}
+
+.copy-link-button.stcwca-copying {
+    background: #f0f0f1;
+    color: #646970;
+    cursor: not-allowed;
+}
+
+.copy-link-button .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+    margin-top: -2px;
+}
+
+/* Improve button spacing in table */
+.widefat td .button {
+    margin-right: 4px;
+}
+
+.widefat td .button:last-child {
+    margin-right: 0;
 }
