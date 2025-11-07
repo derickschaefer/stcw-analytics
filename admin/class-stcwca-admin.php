@@ -78,7 +78,7 @@ class STCWCA_Admin {
         }
 
         $coverage = STCWCA_Core::get_coverage_data();
-        $uncached = STCWCA_Core::get_uncached_content(25);
+        $uncached = STCWCA_Core::get_uncached_content(0); // Get ALL uncached content (no limit)
         $cached   = STCWCA_Core::get_cached_content(10);
 
         require_once STCWCA_PLUGIN_DIR . 'admin/views/dashboard.php';

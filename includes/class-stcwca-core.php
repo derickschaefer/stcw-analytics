@@ -26,12 +26,16 @@ class STCWCA_Core {
         $published_pages = isset($total_pages->publish) ? (int) $total_pages->publish : 0;
         $total_content = $published_posts + $published_pages;
         
-        // Count cached static files
-        $cached_count = class_exists('STCW_Core') ? STCW_Core::count_static_files() : 0;
+        // Get ALL uncached content (no limit) to get accurate count
+        $uncached = self::get_uncached_content(0); // 0 = no limit, get all
+        $uncached_count = count($uncached);
+        
+        // Calculate cached count
+        $cached_posts_pages = $total_content - $uncached_count;
         
         // Calculate coverage percentage
         $coverage = $total_content > 0 
-            ? round(($cached_count / $total_content) * 100, 1) 
+            ? round(($cached_posts_pages / $total_content) * 100, 1) 
             : 0;
         
         // Get directory size
@@ -42,9 +46,9 @@ class STCWCA_Core {
             'total_posts' => $published_posts,
             'total_pages' => $published_pages,
             'total_content' => $total_content,
-            'cached_files' => $cached_count,
+            'cached_files' => $cached_posts_pages,
             'coverage_percent' => $coverage,
-            'uncached_count' => max(0, $total_content - $cached_count),
+            'uncached_count' => $uncached_count,
             'static_size' => $static_size,
             'formatted_size' => $formatted_size,
         ];
@@ -53,30 +57,35 @@ class STCWCA_Core {
     /**
      * Get list of uncached posts and pages
      *
-     * @param int $limit Maximum number of results to return
+     * @param int $limit Maximum number of results to return (0 = all)
      * @return array Array of uncached content with title, URL, and type
      */
-    public static function get_uncached_content($limit = 50) {
+    public static function get_uncached_content($limit = 0) {
         global $wpdb;
         
         // Sanitize limit
         $limit = absint($limit);
-        $limit = min($limit, 500); // Cap at 500 for performance
         
-        // Query published posts and pages
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Simple analytics query, caching not beneficial
-        $posts = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT ID, post_title, post_type, post_modified 
+        // Build query
+        $query = "SELECT ID, post_title, post_type, post_modified 
                  FROM {$wpdb->posts} 
                  WHERE post_status = %s 
                  AND post_type IN ('post', 'page')
-                 ORDER BY post_modified DESC
-                 LIMIT %d",
-                'publish',
-                $limit
-            )
-        );
+                 ORDER BY post_modified DESC";
+        
+        // Add limit if specified
+        if ($limit > 0) {
+            $query .= " LIMIT %d";
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $posts = $wpdb->get_results(
+                $wpdb->prepare($query, 'publish', $limit)
+            );
+        } else {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $posts = $wpdb->get_results(
+                $wpdb->prepare($query, 'publish')
+            );
+        }
         
         if (!$posts) {
             return [];
