@@ -66,24 +66,32 @@ class STCWCA_Core {
         // Sanitize limit
         $limit = absint($limit);
         
-        // Build query
-        $query = "SELECT ID, post_title, post_type, post_modified 
-                 FROM {$wpdb->posts} 
-                 WHERE post_status = %s 
-                 AND post_type IN ('post', 'page')
-                 ORDER BY post_modified DESC";
-        
         // Add limit if specified
         if ($limit > 0) {
-            $query .= " LIMIT %d";
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             $posts = $wpdb->get_results(
-                $wpdb->prepare($query, 'publish', $limit)
+                $wpdb->prepare(
+                    "SELECT ID, post_title, post_type, post_modified 
+                     FROM {$wpdb->posts} 
+                     WHERE post_status = %s 
+                     AND post_type IN ('post', 'page')
+                     ORDER BY post_modified DESC
+                     LIMIT %d",
+                    'publish',
+                    $limit
+                )
             );
         } else {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
             $posts = $wpdb->get_results(
-                $wpdb->prepare($query, 'publish')
+                $wpdb->prepare(
+                    "SELECT ID, post_title, post_type, post_modified 
+                     FROM {$wpdb->posts} 
+                     WHERE post_status = %s 
+                     AND post_type IN ('post', 'page')
+                     ORDER BY post_modified DESC",
+                    'publish'
+                )
             );
         }
         
