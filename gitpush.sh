@@ -2,10 +2,9 @@
 # -----------------------------------------------------
 # gitpush.sh
 # Helper script to push stcw-coverage-assistant to GitHub
-# Repo: https://github.com/derickschaefer/stcw-coverage-assistant
+# Repo (SSH): git@github.com:derickschaefer/stcw-coverage-assistant.git
 # -----------------------------------------------------
 
-# Stop on first error
 set -e
 
 # Define plugin directory
@@ -14,10 +13,14 @@ PLUGIN_DIR="/root/plugins/stcw-coverage-assistant"
 # Move to plugin directory
 cd "$PLUGIN_DIR"
 
-# Ensure Git trusts this path (important when running as root)
+# Ensure Git trusts this path
 git config --global --add safe.directory "$PLUGIN_DIR"
 
-# Ensure we're on main branch (create or rename if needed)
+# Ensure your Git identity is set
+git config --global user.name "Derick Schaefer"
+git config --global user.email "you@example.com"
+
+# Ensure we're on the main branch
 git branch -M main
 
 # Add all changes
@@ -35,17 +38,17 @@ fi
 # Commit (ignore 'nothing to commit' case)
 git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit."
 
-# Make sure remote is correct (update if you renamed the repo)
-EXPECTED_REMOTE="https://github.com/derickschaefer/stcw-coverage-assistant.git"
+# Ensure remote uses SSH (no HTTPS prompt)
+EXPECTED_REMOTE="git@github.com:derickschaefer/stcw-coverage-assistant.git"
 CURRENT_REMOTE=$(git remote get-url origin 2>/dev/null || echo "")
 
 if [ "$CURRENT_REMOTE" != "$EXPECTED_REMOTE" ]; then
-  echo "🔧 Updating remote origin to $EXPECTED_REMOTE"
+  echo "🔧 Updating remote origin to SSH ($EXPECTED_REMOTE)"
   git remote set-url origin "$EXPECTED_REMOTE"
 fi
 
-# Push to GitHub
-echo "🚀 Pushing to GitHub..."
+# Push to GitHub via SSH
+echo "🚀 Pushing to GitHub via SSH..."
 git push -u origin main
 
 echo "✅ Push complete!"
